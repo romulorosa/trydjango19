@@ -2,26 +2,10 @@ from django.test import TestCase
 from django.http import HttpRequest
 from django.template.loader import render_to_string
 from django.shortcuts import render, get_object_or_404
+from django.test import Client
 from posts.views import post_list, post_detail
 from .models import Post
 
-
-class IndexPageViewTest(TestCase):
-    def test_home_page_user_posts_with_user(self):
-        request = HttpRequest()
-        context = {'user_name': 'romulo'}
-        response = post_list(request, context)
-        observed_content = response.content.decode('utf8')
-        expected_content = render_to_string('index.html', {'user_name':'romulo'})
-        self.assertEqual(observed_content, expected_content)
-
-    def test_home_page_user_posts_without_user(self):
-        request = HttpRequest()
-        context = {}
-        response = post_list(request, context)
-        observed_content = response.content.decode('utf8')
-        expected_content = render_to_string('index.html', {})
-        self.assertEqual(observed_content, expected_content)
 
 class PostDatailViewTest(TestCase):
 
@@ -42,3 +26,14 @@ class PostDatailViewTest(TestCase):
         }
         expected_content = render_to_string('post_detail.html', context)
         self.assertEqual(observed_content, expected_content)
+
+    def test_post_list_filled(self):
+        c = Client()
+        response = c.get('/posts/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_post_list_emtpy(self):
+        c = Client()
+        Post.objects.all().delete()
+        response = c.get('/posts/')
+        self.assertEqual(response.status_code, 404)
