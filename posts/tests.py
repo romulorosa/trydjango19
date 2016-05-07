@@ -32,6 +32,16 @@ class PostDatailViewTest(TestCase):
         response = c.get('/posts/')
         self.assertEqual(response.status_code, 200)
 
+    def test_post_detail_found(self):
+        c = Client()
+        response = c.get('/posts/detail/1/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_post_detail_not_found(self):
+        c = Client()
+        response = c.get('/posts/detail/99/')
+        self.assertEqual(response.status_code, 404)
+
     def test_post_list_emtpy(self):
         c = Client()
         Post.objects.all().delete()
