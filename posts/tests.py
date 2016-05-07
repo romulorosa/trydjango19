@@ -32,6 +32,13 @@ class PostDatailViewTest(TestCase):
         response = c.get('/posts/')
         self.assertEqual(response.status_code, 200)
 
+    def test_post_detail_title(self):
+        c = Client()
+        response = c.get('/posts/detail/1/')
+        context = response.context
+        instance = context['instance']
+        self.assertEqual(instance.title, "Meu primeiro post")
+
     def test_post_detail_found(self):
         c = Client()
         response = c.get('/posts/detail/1/')
