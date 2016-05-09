@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, get_list_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 
 from .models import Post
 from .forms import PostForm
@@ -16,13 +16,23 @@ def post_list(request):
 def post_delete(request):
     return HttpResponse("<h1>DELETE</h1>")
 
-def post_update(request):
-    return HttpResponse("<h1>UPDATE</h1>")
+def post_update(request, post_id=None):
+    instance = get_object_or_404(Post, id=post_id)
+    form = PostForm(request.POST or None, instance=instance)
+    if request.method == "POST":
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.save()
+            return HttpResponseRedirect(instance.get_absolute_url())
 
-# def post_create(request):
-#     return HttpResponse("<h1>CREATE</h1>")
+    context = {
+        "form": form,
+        "submit_btn_text": "Update"
+    }
+    return render(request, "post_form.html", context)
 
-def post_detail(request, post_id=1):
+
+def post_detail(request, post_id=None):
     #instance = Post.objects.get(id=1)
     instance = get_object_or_404(Post, id=post_id)
     context = {
@@ -37,8 +47,10 @@ def post_create(request):
         if form.is_valid():
             instance = form.save(commit=False)
             instance.save()
+            return HttpResponseRedirect(instance.get_absolute_url())
 
     context = {
         "form": form,
+        "submit_btn_text": "Create"
     }
     return render(request, "post_form.html", context)
