@@ -10,8 +10,8 @@ from .views import (
 
 urlpatterns = [
     url(r'^create/$', post_create),
-    url(r'^detail/(?P<post_id>\d+)/$', post_detail, name="detail"),
+    url(r'^(?P<post_id>\d+)/detail/$', post_detail, name="detail"),
     url(r'^(?P<post_id>\d+)/edit/$', post_update, name="edit"),
-    url(r'^delete/$', post_delete),
-    url(r'^$', post_list),
+    url(r'^(?P<post_id>\d+)/delete/$', post_delete),
+    url(r'^$', post_list, name="list"),
 ]
